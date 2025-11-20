@@ -4,7 +4,7 @@ import Header from '../common/Header'
 export default function Aboutus() {
   return (
     <>
-        <Header/>
+       
 
         <section className='py-10'>
             <div className='max-w-[1320px] mx-auto'>

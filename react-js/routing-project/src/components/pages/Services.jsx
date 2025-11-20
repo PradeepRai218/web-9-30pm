@@ -25,7 +25,7 @@ export default function Services() {
 
     return (
         <>
-            <Header/>
+           
              <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="bg-blue-600 text-white py-16 px-4">

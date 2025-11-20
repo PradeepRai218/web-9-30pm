@@ -4,7 +4,7 @@ import Header from '../common/Header'
 export default function Cart() {
 return (
     <>
-        <Header />
+      
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         
         <h1 className="text-2xl font-bold mt-4">Your Cart</h1>

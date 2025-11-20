@@ -74,7 +74,7 @@ export default function Header() {
         </div>
       </div>
 
-      <header className="sticky top-0 bg-white">
+      <header className="sticky top-0 z-5 bg-white">
         <nav className="bg-neutral-primary  w-full z-20 top-0 start-0 border-b border-default">
           <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <a
@@ -152,6 +152,14 @@ export default function Header() {
                     className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
                   >
                     Services
+                  </Link>
+                </li>
+                 <li>
+                  <Link
+                    to={"/faq"}
+                    className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
+                  >
+                    Faq
                   </Link>
                 </li>
                 <li className="flex gap-2">
