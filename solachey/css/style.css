@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+     font-family: "Jost", sans-serif;
+}
+header{
+    top: 40px;
+    transform: 0.5s;
+}
+
+.haederScrollFixed{
+    top: 0px;
+}
+
+#menu ul li a{
+    font-weight: 500;
+    font-size: 18px;
+    padding: 20px 12px;
+    color: #000;
+    border-radius: 15px;
+    text-transform: uppercase;
+    transition: 0.5s;
+
+}
+
+.btnEnquiry{
+    background-color: #123062;
+    color: white;
+    padding: 7px 25px;
+    border-radius: 20px;
+}
+
+#mobileMenu{
+    width: 80%;
+}
+
+
+#homeBannerSlider .carousel-control-next-icon, .carousel-control-prev-icon {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 80% 80%;
+    background-color: red;
+    border-radius: 50%;
+}
+
+.DiscoverSection{
+    background: #F2F2F6;
+}
+
+.DiscoverSection h2{
+   
+}
+
+.DiscoverItems{
+    position: relative;
+    overflow: hidden;
+}
+
+.Discoveroverlay{
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: 0.5s;
+}   
+
+.DiscoverItems:hover .Discoveroverlay{
+     background-color: rgba(0, 0, 0, 0.8);
+}
+.DiscoverItems img{
+     transition: 0.5s;
+}
+
+.DiscoverItems:hover img{
+    transform: scale(1.2);
+}
+
+#enquiryModal .iti {
+    width: 100%;
+}
