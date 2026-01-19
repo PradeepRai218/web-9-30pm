@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { BsCart } from "react-icons/bs";
 import { LuFacebook } from "react-icons/lu";
 import { Link } from "react-router";
 import { FaXmark } from "react-icons/fa6";
+import { myGlobalContext } from "../../context/MainContext";
 
 export default function Header() {
-  let [count, setCount] = useState(0);
 
-  let addtoCart = () => {
-    setCount(count + 1);
-    //  alert("hello")
-  };
+     let {cart,count,setCount}  =useContext(myGlobalContext)
 
-  // let addData=(n,m)=>{
-  //   alert(n+m)
-  // }
+  console.log(cart);
+     
+
   let [modalStatus,setModalstatus]=useState(false)
 
   return (
@@ -119,7 +116,7 @@ export default function Header() {
               className="hidden w-full md:block md:w-auto"
               id="navbar-default"
             >
-              <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-default rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral-primary">
+              <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 items-center  border border-default rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral-primary">
                 <li>
                   <Link
                     to={"/"}
@@ -154,6 +151,30 @@ export default function Header() {
                     Services
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to={"/use-effect"}
+                    className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
+                  >
+                    Use Effect
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={"/product"}
+                    className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
+                  >
+                    Product
+                  </Link>
+                </li>
+                 <li>
+                  <Link
+                    to={"/product-api"}
+                    className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
+                  >
+                    Product API
+                  </Link>
+                </li>
                  <li>
                   <Link
                     to={"/faq"}
@@ -162,29 +183,20 @@ export default function Header() {
                     Faq
                   </Link>
                 </li>
-                <li className="flex gap-2">
-                  {/* <button onClick={()=>addData(25,66)} class="bg-red-500">Add </button>
 
-                 <button onClick={addtoCart} class="bg-red-500">Add to Cart </button>
-
-                 <button onClick={
-                  ()=>{
-                    alert("Hello")
-                  }
-                 } class="bg-red-500">Add to Cart </button> */}
-                  <button onClick={addtoCart} class="bg-red-500">
-                    Add to Cart
-                  </button>
-
+                 <li>
                   <Link
                     to={"/cart"}
-                    className="flex i gap-3 py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
+                    className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
                   >
-                    Cart{" "}
-                    <span className="flex items-center">
-                      <BsCart className="text-red-500 text-3xl" /> ({count})
-                    </span>
+                    Cart ({cart.length})
                   </Link>
+                </li>
+                <li>
+                  <button onClick={()=>setCount(count+1)} className="bg-amber-700 text-white p-3 rounded-[10px] cursor-pointer">
+                    Change Count
+                  </button>
+
                 </li>
 
                 <li>

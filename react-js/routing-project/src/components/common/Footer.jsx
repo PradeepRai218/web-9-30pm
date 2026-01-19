@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { myGlobalContext } from '../../context/MainContext'
 
 export default function Footer() {
+ let {count} =useContext(myGlobalContext)
   return (
-    <div>Footer</div>
+    <div>Footer {count}</div>
   )
 }
