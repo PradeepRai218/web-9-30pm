@@ -6,6 +6,8 @@ import "sweetalert2/src/sweetalert2.scss";
 function App() {
   let apiBaseUrl = `http://localhost:8000/enquiry/`;
 
+  let [editId, setEditId] = useState(null);
+
   const [formData, setFormData] = useState({
     studentName: "",
     studentEmail: "",
@@ -28,25 +30,61 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post(`${apiBaseUrl}save`, formData)
-      .then((res) => res.data)
-      .then((finalRes) => {
-        if (finalRes._status) {
-           Swal.fire({
+    if (editId) {
+         axios.put(`${apiBaseUrl}update/${editId}`,formData)
+         .then((res) => res.data)
+        .then((finalRes) => {
+          if (finalRes._status) {
+            Swal.fire({
+              title: "Data Update!",
+              text: "new enquiry Update",
+              icon: "success",
+            });
+            getEnquiry();
+            // e.target.reset()
+            setFormData({
+              studentName: "",
+              studentEmail: "",
+              studentPhone: "",
+            });
+            setEditId(null)
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: finalRes._message,
+            });
+          }
+        });
+      //Update
+
+    } else {
+      axios
+        .post(`${apiBaseUrl}save`, formData)
+        .then((res) => res.data)
+        .then((finalRes) => {
+          if (finalRes._status) {
+            Swal.fire({
               title: "Data Added!",
               text: "new enquiry created",
               icon: "success",
             });
-          getEnquiry();
-          // e.target.reset()
-          setFormData({
-            studentName: "",
-            studentEmail: "",
-            studentPhone: "",
-          });
-        }
-      });
+            getEnquiry();
+            // e.target.reset()
+            setFormData({
+              studentName: "",
+              studentEmail: "",
+              studentPhone: "",
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: finalRes._message,
+            });
+          }
+        });
+    }
   };
 
   let getEnquiry = () => {
@@ -82,8 +120,6 @@ function App() {
               icon: "success",
             });
           });
-
-       
       }
     });
 
@@ -95,6 +131,24 @@ function App() {
     //       getEnquiry();
     //     });
     // }
+  };
+
+  let getDetails = (id) => {
+    setEditId(id);
+    axios.get(`${apiBaseUrl}view/${id}`)
+      .then((res) => res.data)
+      .then((finalRes) => {
+        let {studentName,studentEmail,studentPhone}=finalRes.data
+       ;
+           setFormData({
+              studentName,
+              studentEmail,
+              studentPhone
+            });
+
+        // console.log(finalRes.data);
+      });
+
   };
 
   useEffect(() => {
@@ -168,7 +222,7 @@ function App() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
           >
-            Add Contact
+            {editId ? "Update" : "Add"} Contact
           </button>
         </form>
       </div>
@@ -228,7 +282,10 @@ function App() {
                           Delete
                         </button>
                         |
-                        <button className="bg-green-500 rounded-[10px] p-2 text-white">
+                        <button
+                          onClick={() => getDetails(obj._id)}
+                          className="bg-green-500 rounded-[10px] p-2 text-white"
+                        >
                           Edit
                         </button>
                       </th>
