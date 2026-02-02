@@ -58,10 +58,25 @@ export default function ViewColor() {
 
   const changeStatus = () => {
     if (selectedRecord.length > 0) {
-      iziToast.success({
-        title: "Success",
-        message: "Status Change suces",
-        position: "topRight",
+      axios
+      .post(`${apiBaseUrl}/color/change-status`, {
+        ids: selectedRecord,
+      })
+      .then((res) => res.data)
+      .then((finalRes) => {
+        if (finalRes._status) {
+          viewColor()
+          iziToast.success({
+            title: "Deleted",
+            message:
+              "status update successfully.",
+            position: "topRight",
+          });
+
+          instance.hide({ transitionOut: "fadeOut" }, toast);
+          setSelectedRecord([]);
+         
+        }
       });
 
       setSelectedRecord([]);
@@ -98,7 +113,7 @@ export default function ViewColor() {
                 .then((res) => res.data)
                 .then((finalRes) => {
                   if (finalRes._status) {
-                   
+
                     iziToast.success({
                       title: "Deleted",
                       message:
@@ -108,7 +123,7 @@ export default function ViewColor() {
 
                     instance.hide({ transitionOut: "fadeOut" }, toast);
                     setSelectedRecord([]);
-                     viewColor()
+                    viewColor()
                   }
                 });
 
@@ -325,13 +340,24 @@ export default function ViewColor() {
                           <td className="px-2  py-4">{index + 1}</td>
                           <td className="px-2  py-4">{obj.colorName}</td>
                           <td className="px-2  py-4">{obj.colorCode}</td>
-                          <td className="px-2  py-4">1</td>
-                          <td className="px-2  py-4 text-green-600 font-bold">
-                            {obj.colorStatus ? "Active" : "Deactive"}
-                          </td>
+                          <td className="px-2  py-4">{obj.colorOrder}</td>
+
+                          {
+                            obj.colorStatus ?
+                              <td className="px-2  py-4 text-green-600 font-bold">
+                                Active
+                              </td>
+                              :
+                              <td className="px-2  py-4 text-red-600 font-bold">
+                                DeActive
+                              </td>
+
+                          }
+
+
 
                           <td className="px-2  py-4 flex gap-3">
-                            <Link>
+                            <Link to={`/color/add/${obj._id}`}>
                               <svg
                                 fill="gold"
                                 className="w-5 h-5"

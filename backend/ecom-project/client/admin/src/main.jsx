@@ -32,7 +32,7 @@ createRoot(document.getElementById('root')).render(
       <Route path='/' element={<Common />}>
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='color'>
-          <Route path='add' element={<AddColor />} />
+          <Route path='add/:id?' element={<AddColor />} />
           <Route path='view' element={<ViewColor />} />
         </Route>
         <Route path='material'>

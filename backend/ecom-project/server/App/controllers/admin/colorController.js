@@ -76,6 +76,37 @@ let colormultiDelete = async (req, res) => {
   });
 };
 
+let changeStatus = async (req, res) => {
+  let { ids } = req.body; // { ids:[id1,id2] }
+
+
+  
+
+  let changeStatus = await colorModal.updateMany(
+    { _id: ids }, //Array //["6980d1ee3ca3b27c59ea9e96","6980d1fc3ca3b27c59ea9e99"]
+    [ 
+      {
+        $set:{
+          colorStatus:{
+            $not:'$colorStatus' //False
+          }
+        }
+      },
+    ],
+    {
+        updatePipeline:true
+    }
+  );
+  res.send({
+    _status: true,
+    _message: "Color Status Changed",
+    changeStatus
+    
+  });
+};
+
+
+
 let colorUpdate =async (req, res) => {
   let { id } = req.params;
   let bodyData = req.body;
@@ -111,10 +142,25 @@ let colorUpdate =async (req, res) => {
   }
 };
 
+let getcolorDetails=async (req,res)=>{
+
+  let {id}=req.params
+
+  let data = await colorModal.findOne({_id:id});
+  res.send({
+    _status: true,
+    _message: "Color View Controller",
+    data,
+  });
+}
+
+
 module.exports = {
   colorCreate,
   colorView,
   colorDelete,
   colorUpdate,
   colormultiDelete,
+  getcolorDetails,
+  changeStatus
 };
