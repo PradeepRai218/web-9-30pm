@@ -10,7 +10,7 @@ App.use(express.json());
 
 
 
-
+App.use("/uploads/category",express.static("uploads/category"))
 
 App.use("/admin",adminRoutes) //Index page adminRoutes http://localhost:8000/admin
 // App.use("/web",webRoutes) //Index page adminRoutes http://localhost:8000/admin
