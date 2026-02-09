@@ -3,6 +3,7 @@ const categoryModal = require("../../model/categoryModel");
 
 
 let categoryCreate=async (req,res)=>{
+    console.log(req.body)
     let obj={...req.body} //{ categoryName: 'Men', categoryOrder: '1' }
 
     let slug=mySlug(obj.categoryName)
@@ -56,7 +57,7 @@ let categoryView = async (req, res) => {
   res.send({
     _status: true,
     _message: "category found",
-    path:process.env.CATEGORYPATH,
+    path:process.env.SUBCATEGORYPATH,
     data,
   });
 };

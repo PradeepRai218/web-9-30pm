@@ -5,11 +5,19 @@ import { Link } from "react-router-dom";
 import iziToast from "izitoast";
 import axios from "axios";
 
+import ResponsivePagination from 'react-responsive-pagination';
+import 'react-responsive-pagination/themes/classic-light-dark.css';
+
 export default function ViewColor() {
   let [data, setData] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
   const [filterData, setFilterData] = useState({});
   const [selectedRecord, setSelectedRecord] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+   const [totalPages , setTotalPages ] = useState(0);
+   
+   let limit=2
+
 
   let apiBaseUrl = import.meta.env.VITE_APIBASEURL;
 
@@ -22,12 +30,6 @@ export default function ViewColor() {
     };
 
     setFilterData(obj);
-
-    iziToast.success({
-      title: "Success",
-      message: "Filter applied successfully!",
-      position: "topRight",
-    });
   };
 
   // console.log(filterData)
@@ -155,16 +157,20 @@ export default function ViewColor() {
 
   let viewColor = () => {
     axios
-      .get(`${apiBaseUrl}/color/view`)
+      .post(`${apiBaseUrl}/color/view`, {
+        name : filterData.name,
+        page:currentPage  //1
+      })
       .then((res) => res.data)
       .then((finalRes) => {
         setData(finalRes.data);
+        setTotalPages(finalRes._paginate.total_pages); //4
       });
   };
 
   useEffect(() => {
     viewColor();
-  }, []);
+  }, [filterData,currentPage]);
 
   console.log(selectedRecord);
 
@@ -336,8 +342,12 @@ export default function ViewColor() {
                               className="w-4 h-4 text-purple-600 cursor-pointer"
                             />
                           </td>
-
-                          <td className="px-2  py-4">{index + 1}</td>
+                                                        {/* 1*2 = 2 */}
+                          <td className="px-2  py-4">{
+                           
+                           (currentPage-1)*limit +index + 1
+                           
+                           }</td>
                           <td className="px-2  py-4">{obj.colorName}</td>
                           <td className="px-2  py-4">{obj.colorCode}</td>
                           <td className="px-2  py-4">{obj.colorOrder}</td>
@@ -379,6 +389,12 @@ export default function ViewColor() {
                   )}
                 </tbody>
               </table>
+                  <ResponsivePagination
+      current={currentPage}
+      total={totalPages}
+      onPageChange={setCurrentPage}
+    />
+
             </div>
           </div>
         </div>

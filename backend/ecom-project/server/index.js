@@ -7,10 +7,13 @@ const mongoose = require('mongoose');
 
 App.use(cors())
 App.use(express.json());
+App.use(express.urlencoded({extended: true}));
 
 
 
 App.use("/uploads/category",express.static("uploads/category"))
+App.use("/uploads/subcategory",express.static("uploads/subcategory"))
+
 
 App.use("/admin",adminRoutes) //Index page adminRoutes http://localhost:8000/admin
 // App.use("/web",webRoutes) //Index page adminRoutes http://localhost:8000/admin

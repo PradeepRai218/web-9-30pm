@@ -3,7 +3,7 @@ const { colorCreate, colorView, colorDelete, colorUpdate, colormultiDelete, chan
 let colorRoutes = express.Router();
 
 colorRoutes.post("/create",colorCreate);
-colorRoutes.get("/view", colorView);
+colorRoutes.post("/view", colorView);
 colorRoutes.delete("/delete/:id", colorDelete);
 
 colorRoutes.post("/multi-delete", colormultiDelete);

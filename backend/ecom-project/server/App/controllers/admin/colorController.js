@@ -32,10 +32,46 @@ let colorView = async (req, res) => {
     deletedAt: null,
   };
 
-  let data = await colorModal.find(filter);
+  // filter.colorOrder = {
+  //   $gte : 3
+  // }
+
+  if(req.body != undefined){
+    if(req.body.name != undefined && req.body.name != ''){
+        filter.colorName = req.body.name;
+    }
+  }
+
+  var limit = 2;
+  var skip = 0;
+  var page = 1;
+
+  if(req.body != undefined){
+    if(req.body.page != undefined && req.body.page != ''){
+      page = req.body.page;
+      skip = (page - 1) * limit;
+    }
+  }
+
+  let total_records = await colorModal.find(filter).countDocuments(); 
+
+  var paginate = {
+    total_records : total_records,
+    current_page : page,
+    total_pages : Math.ceil(total_records/limit) //3.2  //4  3.9 //4
+  }
+
+
+  let data = await colorModal.find(filter)
+  .limit(limit).skip(skip)
+  .sort({
+    colorOrder : 'asc',
+    _id : 'desc'
+  });
   res.send({
     _status: true,
     _message: "Color View Controller",
+    _paginate : paginate,
     data,
   });
 };
