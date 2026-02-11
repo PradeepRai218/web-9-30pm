@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
 export default function AddSubSubCategory() {
+
+    let apiBaseUrl = import.meta.env.VITE_APIBASEURL;
+
     let [errors, setErrors] = useState([]);
     let [SelectedImage, setSelectedImage] = useState("");
 
@@ -28,6 +32,30 @@ export default function AddSubSubCategory() {
         }
     };
 
+     let [category,setCategory]=useState([])
+    let [subCategory,setsubCategory]=useState([])
+
+    let getParentCategory=()=>{
+        axios.get(`${apiBaseUrl}/subsubcategory/parent-category`)
+        .then((res)=>res.data)
+        .then((finalRes)=>{
+            setCategory(finalRes.data); //[{…}, {…}, {…}]
+            
+        })
+    }
+
+    let getSubCategoryDataFun=(PID)=>{
+            axios.get(`${apiBaseUrl}/subsubcategory/sub-category/${PID}`)
+        .then((res)=>res.data)
+        .then((finalRes)=>{
+            setsubCategory(finalRes.data); //[{…}, {…}, {…}]
+            
+        })  
+    }   
+
+    useEffect(()=>{
+        getParentCategory()
+    },[])
 
     return (
         <>
@@ -115,11 +143,18 @@ export default function AddSubSubCategory() {
                                         Select Parent Category
                                     </label>
 
-                                    <select onKeyUp={ErrorHandler} id="default" name="parent_id" className="text-[17px] border cursor-pointer border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3">
-                                        <option className='cursor-pointer rounded-sm' value=''>Select Parent Category</option>
-
+                                    <select
+                                    onChange={(e)=>getSubCategoryDataFun(e.target.value)}
+                                    name="parentCategory" onKeyUp={ErrorHandler} id="default"  className="text-[17px] border cursor-pointer border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3">
+                                        <option className='cursor-pointer' value=''>Select Category</option>
+                                        {
+                                            category.map((obj,index)=> 
+                                            <option value={obj._id}>
+                                                {obj.categoryName}
+                                            </option>)
+                                        }
+                                       
                                     </select>
-
 
                                     {errors.includes("parent_id") && (
                                         <p className="text-red-600 text-sm mt-1">parent-category is required</p>
@@ -134,7 +169,12 @@ export default function AddSubSubCategory() {
 
                                     <select onKeyUp={ErrorHandler} id="default" name="sub_category_id" className="text-[17px] border cursor-pointer border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3">
                                         <option className='cursor-pointer' value=''>Select Sub Category</option>
-
+                                         {
+                                            subCategory.map((obj,index)=> 
+                                            <option value={obj._id}>
+                                                {obj.subcategoryName}
+                                            </option>)
+                                        }
                                     </select>
 
 

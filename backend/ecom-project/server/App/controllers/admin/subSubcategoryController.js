@@ -1,12 +1,13 @@
 const { mySlug } = require("../../config/helper");
 const categoryModal = require("../../model/categoryModel");
 const subcategoryModal = require("../../model/subCategoryModel");
+const subSubcategoryModal = require("../../model/subSubCategoryModel");
 
 
 
 
 
-let subcategoryCreate=async (req,res)=>{
+let subSubcategoryCreate=async (req,res)=>{
     console.log(req.body)
     let obj={...req.body} //{ parentCategory:'698a1160f303679d94539e0d' subcategoryName: 'Topwear', subcategoryOrder: '1' }
 
@@ -52,7 +53,7 @@ let subcategoryCreate=async (req,res)=>{
     
 }
 
-let subcategoryView = async (req, res) => {
+let subSubcategoryView = async (req, res) => {
   let filter = {
     deletedAt: null,
   };
@@ -83,4 +84,24 @@ let parentCategoryData=async (req,res)=>{
   });
 }
 
-module.exports={subcategoryCreate,subcategoryView,parentCategoryData}
+let subCategoryData=async (req,res)=>{
+
+  let {parentId}=req.params
+
+   let filter = {
+    deletedAt: null,
+    subcategoryStatus:true,
+    parentCategory:parentId
+  };
+
+   let data = await subcategoryModal.find(filter).select('subcategoryName')
+   res.send({
+    _status: true,
+    _message: "Sub category found",
+   
+    data,
+  });
+}
+
+
+module.exports={subSubcategoryCreate,subSubcategoryView,parentCategoryData,subCategoryData}

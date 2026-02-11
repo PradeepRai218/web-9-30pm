@@ -1,7 +1,13 @@
-import React, { useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
+import { useNavigate } from 'react-router';
 
 export default function AddSubCategory() {
+
+    let apiBaseUrl = import.meta.env.VITE_APIBASEURL;
+
+    let [category,setCategory]=useState([])
 
     let [errors, setErrors] = useState([]);
     let [SelectedImage, setSelectedImage] = useState("");
@@ -29,6 +35,38 @@ export default function AddSubCategory() {
             setErrors(updated);
         }
     };
+
+
+
+    let getParentCategory=()=>{
+        axios.get(`${apiBaseUrl}/subcategory/parent-category`)
+        .then((res)=>res.data)
+        .then((finalRes)=>{
+            setCategory(finalRes.data); //[{…}, {…}, {…}]
+            
+        })
+    }
+    let navigate=useNavigate()
+
+    let saveSubCategory=(e)=>{
+        e.preventDefault()
+        let formValue=new FormData(e.target)
+        axios.post(`${apiBaseUrl}/subcategory/create`, formValue)
+        .then((res) => res.data)
+        .then((finalRes) => {
+            if(finalRes._status){
+                navigate('/sub-sub-category/view')
+            }
+        })
+
+    }
+
+
+    useEffect(()=>{
+        getParentCategory()
+    },[])
+
+
     return (
         <>
             <section className="w-full">
@@ -52,7 +90,7 @@ export default function AddSubCategory() {
                             Add New Sub Category
                         </h3>
 
-                        <form className="border border-t-0  flex bg-white p-6 rounded-b-lg shadow-sm">
+                        <form onSubmit={saveSubCategory} className="border border-t-0  flex bg-white p-6 rounded-b-lg shadow-sm">
 
                             {/* IMAGE AREA */}
                             <div className='flex basis-[30%] flex-col items-center'>
@@ -100,6 +138,7 @@ export default function AddSubCategory() {
                                     {/* FILE INPUT */}
                                     <input
                                         type="file"
+                                        name='subcategoryImage'
                                         onChange={handleimagechange}
                                         className="absolute z-20 inset-0 opacity-0 cursor-pointer"
                                     />
@@ -115,9 +154,15 @@ export default function AddSubCategory() {
                                         Select Parent Category
                                     </label>
 
-                                    <select onKeyUp={ErrorHandler} id="default" name="parent_id" className="text-[17px] border cursor-pointer border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3">
+                                    <select name="parentCategory" onKeyUp={ErrorHandler} id="default"  className="text-[17px] border cursor-pointer border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3">
                                         <option className='cursor-pointer' value=''>Select Category</option>
-
+                                        {
+                                            category.map((obj,index)=> 
+                                            <option value={obj._id}>
+                                                {obj.categoryName}
+                                            </option>)
+                                        }
+                                       
                                     </select>
 
 
@@ -135,8 +180,9 @@ export default function AddSubCategory() {
 
                                     <input
                                         type="text"
-                                        name="name"
+                                     
                                         autoComplete="off"
+                                        name="subcategoryName"
                                         onKeyUp={ErrorHandler}
                                         className="text-[17px] border border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3"
                                         placeholder="Enter category name"
@@ -155,7 +201,7 @@ export default function AddSubCategory() {
 
                                     <input
                                         type="number"
-                                        name="order"
+                                        name="subcategoryOrder"
                                         min={1}
                                         autoComplete="off"
                                         className="text-[17px] border border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3"

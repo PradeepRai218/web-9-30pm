@@ -13,6 +13,7 @@ App.use(express.urlencoded({extended: true}));
 
 App.use("/uploads/category",express.static("uploads/category"))
 App.use("/uploads/subcategory",express.static("uploads/subcategory"))
+App.use("/uploads/subsubcategory",express.static("uploads/subsubcategory"))
 
 
 App.use("/admin",adminRoutes) //Index page adminRoutes http://localhost:8000/admin
