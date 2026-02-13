@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
+import { useNavigate } from 'react-router';
 export default function AddSubSubCategory() {
 
     let apiBaseUrl = import.meta.env.VITE_APIBASEURL;
@@ -51,7 +52,21 @@ export default function AddSubSubCategory() {
             setsubCategory(finalRes.data); //[{…}, {…}, {…}]
             
         })  
-    }   
+    }  
+
+    let navigate=useNavigate()
+    
+    let saveSubsubCategory=(e)=>{
+         e.preventDefault()
+        let formValue=new FormData(e.target)
+        axios.post(`${apiBaseUrl}/subsubcategory/create`, formValue)
+        .then((res) => res.data)
+        .then((finalRes) => {
+            if(finalRes._status){
+                navigate('/sub-sub-category/view')
+            }
+        })
+    }
 
     useEffect(()=>{
         getParentCategory()
@@ -80,7 +95,7 @@ export default function AddSubSubCategory() {
                             Add New Sub Sub Category
                         </h3>
 
-                        <form className="border border-t-0  flex bg-white p-6 rounded-b-lg shadow-sm">
+                        <form onSubmit={saveSubsubCategory} className="border border-t-0  flex bg-white p-6 rounded-b-lg shadow-sm">
 
                             {/* IMAGE AREA */}
                             <div className='flex basis-[30%] flex-col items-center'>
@@ -128,6 +143,7 @@ export default function AddSubSubCategory() {
                                     {/* FILE INPUT */}
                                     <input
                                         type="file"
+                                        name='subSubcategoryImage'
                                         onChange={handleimagechange}
                                         className="absolute z-20 inset-0 opacity-0 cursor-pointer"
                                     />
@@ -167,7 +183,7 @@ export default function AddSubSubCategory() {
                                         Select Sub Category
                                     </label>
 
-                                    <select onKeyUp={ErrorHandler} id="default" name="sub_category_id" className="text-[17px] border cursor-pointer border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3">
+                                    <select onKeyUp={ErrorHandler} id="default" name="subCategory" className="text-[17px] border cursor-pointer border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3">
                                         <option className='cursor-pointer' value=''>Select Sub Category</option>
                                          {
                                             subCategory.map((obj,index)=> 
@@ -192,7 +208,7 @@ export default function AddSubSubCategory() {
 
                                     <input
                                         type="text"
-                                        name="name"
+                                        name="subSubcategoryName"
                                         autoComplete="off"
                                         onKeyUp={ErrorHandler}
                                         className="text-[17px] border border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3"
@@ -212,7 +228,7 @@ export default function AddSubSubCategory() {
 
                                     <input
                                         type="number"
-                                        name="order"
+                                        name="subSubcategoryOrder"
                                         min={1}
                                         autoComplete="off"
                                         className="text-[17px] border border-gray-300 text-gray-900 rounded-lg focus:ring-gray-400 focus:border-gray-500 block w-full py-2.5 px-3"

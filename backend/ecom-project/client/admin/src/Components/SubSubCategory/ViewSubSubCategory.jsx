@@ -1,12 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaFilter } from "react-icons/fa";
 import { MdOutlineClose } from "react-icons/md";
 import { Link } from "react-router-dom";
 import iziToast from "izitoast";
+import axios from "axios";
 export default function ViewSubSubCategory() {
+    let apiBaseUrl = import.meta.env.VITE_APIBASEURL;
+
   const [openFilter, setOpenFilter] = useState(false);
   const [filterData, setFilterData] = useState({ name: '', parent_category: "" })
   const [selectedRecord, setSelectedRecord] = useState([])
+
+    let [data, setData] = useState([]);
+  let [path, setPath] = useState("");
+
+  let getSubCategoryData = () => {
+    axios
+      .get(`${apiBaseUrl}/subsubcategory/view`)
+      .then((res) => res.data)
+      .then((finalRes) => {
+        setData(finalRes.data);
+        setPath(finalRes.path);
+      });
+  };
+
+  useEffect(()=>{
+    getSubCategoryData()
+  },[])
 
   const applyFilter = (e) => {
     e.preventDefault();
@@ -129,6 +149,9 @@ export default function ViewSubSubCategory() {
       });
     }
   };
+
+
+
 
   return (
     <>
@@ -280,18 +303,21 @@ export default function ViewSubSubCategory() {
 
                 <tbody>
 
-                  {/* Row 1 */}
-                  <tr className="bg-white border-b">
+                
+                      {
+                        data.map((obj,index)=>{
+                          return(
+                            <tr className="bg-white border-b">
                     <td className="px-2 py-4">
                       <input type="checkbox" onClick={() => SingleCheckSelect(1)} checked={selectedRecord.includes(1)} className="w-4 h-4 text-purple-600 cursor-pointer" />
                     </td>
 
-                    <td className="px-2 py-4">1</td>
-                    <td className="px-2 py-4">Red</td>
-                    <td className="px-2 py-4">Red</td>
-                    <td className="px-2 py-4">Red</td>
+                    <td className="px-2 py-4"> {index+1} </td>
+                    <td className="px-2 py-4">{obj.subSubcategoryName}</td>
+                    <td className="px-2 py-4">{obj.parentCategory.categoryName}</td>
+                    <td className="px-2 py-4">{obj.subCategory.subcategoryName}</td>
                     <td className="px-2 py-4">
-                      <img className="w-[50px]" src="https://www.wscubetech.com/_next/image?url=https%3A%2F%2Fdeen3evddmddt.cloudfront.net%2Fimages%2Fhome-images%2Fjaipur-center.png&w=256&q=75" alt="" />
+                      <img className="w-[50px]" src={path+obj.subSubcategoryImage} />
 
                     </td>
                     <td className="px-2 py-4">1</td>
@@ -305,32 +331,13 @@ export default function ViewSubSubCategory() {
                       </Link>
                     </td>
                   </tr>
+                          )
+                        })
+                    }
+                  
 
                   {/* Row 2 */}
-                  <tr className="bg-white border-b">
-                    <td className="px-2 py-4">
-                      <input type="checkbox" onClick={() => SingleCheckSelect(1)} checked={selectedRecord.includes(1)} className="w-4 h-4 text-purple-600 cursor-pointer" />
-                    </td>
-
-                    <td className="px-2 py-4">2</td>
-                    <td className="px-2 py-4">Red</td>
-                    <td className="px-2 py-4">Red</td>
-                    <td className="px-2 py-4">Red</td>
-                    <td className="px-2 py-4">
-                      <img className="w-[50px]" src="https://www.wscubetech.com/_next/image?url=https%3A%2F%2Fdeen3evddmddt.cloudfront.net%2Fimages%2Fhome-images%2Fjaipur-center.png&w=256&q=75" alt="" />
-
-                    </td>
-                    <td className="px-2 py-4">1</td>
-                    <td className="px-2 py-4 text-red-600 font-bold">Inactive</td>
-
-                    <td className="px-2 py-4  gap-3">
-                      <Link>
-                        <svg fill="gold" className="w-5 h-5" viewBox="0 0 512 512">
-                          <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7z"></path>
-                        </svg>
-                      </Link>
-                    </td>
-                  </tr>
+                
 
 
                 </tbody>

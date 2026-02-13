@@ -1,30 +1,29 @@
 const { mySlug } = require("../../config/helper");
 const categoryModal = require("../../model/categoryModel");
+const colorModal = require("../../model/colorModel");
 const subcategoryModal = require("../../model/subCategoryModel");
 const subSubcategoryModal = require("../../model/subSubCategoryModel");
 
 
 
-
-
-let subSubcategoryCreate=async (req,res)=>{
+let productCreate=async (req,res)=>{
 
     let obj={...req.body} //{ parentCategory:'698a1160f303679d94539e0d' subcategoryName: 'Topwear', subcategoryOrder: '1' }
 
-    let slug=mySlug(obj.subSubcategoryName)
+    let slug=mySlug(obj.productName)
 
     obj['slug']=slug
 
     if(req.file){
         if(req.file.filename){
-            obj['subSubcategoryImage']=req.file.filename
+            obj['productImage']=req.file.filename
         }
     }
     
     
       try {
-        let subSubcategoryRes = subSubcategoryModal(obj); //Error
-        let subcategoryFinalResRes = await subSubcategoryRes.save();
+        let productRes = productModal(obj); //Error
+        let subcategoryFinalResRes = await productRes.save();
         res.send({
           _status: true,
           _message: "sub category Added New",
@@ -53,20 +52,20 @@ let subSubcategoryCreate=async (req,res)=>{
     
 }
 
-let subSubcategoryView = async (req, res) => {
+let productView = async (req, res) => {
   let filter = {
     deletedAt: null,
   };
 
   let data = 
-  await subSubcategoryModal
+  await productModal
   .find(filter)
   .populate('parentCategory','categoryName')
   .populate('subCategory','subcategoryName');
   res.send({
     _status: true,
     _message: "category found",
-    path:process.env.SUBSUBCATEGORYPATH,
+    path:process.env.productPATH,
     data,
   });
 };
@@ -86,6 +85,8 @@ let parentCategoryData=async (req,res)=>{
     data,
   });
 }
+
+
 
 let subCategoryData=async (req,res)=>{
 
@@ -107,4 +108,44 @@ let subCategoryData=async (req,res)=>{
 }
 
 
-module.exports={subSubcategoryCreate,subSubcategoryView,parentCategoryData,subCategoryData}
+let subsubCategoryData=async (req,res)=>{
+
+  let {parentId}=req.params
+
+   let filter = {
+    deletedAt: null,
+    subSubcategoryStatus:true,
+    subCategory:parentId
+  };
+
+   let data = await subSubcategoryModal.find(filter).select('subSubcategoryName')
+   res.send({
+    _status: true,
+    _message: "Sub Sub category found",
+   
+    data,
+  });
+}
+
+let getproductColors=async (req,res)=>{
+
+
+
+   let filter = {
+    deletedAt: null,
+    colorStatus:true,
+ 
+  };
+
+   let data = await colorModal.
+   find(filter)
+   .select('colorName')
+   res.send({
+    _status: true,
+    _message: "color found",
+   
+    data,
+  });
+}
+
+module.exports={productCreate,productView,parentCategoryData,subCategoryData,subsubCategoryData,getproductColors}
