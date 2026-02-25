@@ -4,6 +4,7 @@ require("dotenv").config()
 let cors=require("cors")
 let App=express()
 const mongoose = require('mongoose');
+const { webRoutes } = require("./App/routes/web/webRoute")
 
 App.use(cors())
 App.use(express.json());
@@ -19,6 +20,8 @@ App.use("/uploads/subsubcategory",express.static("uploads/subsubcategory"))
 App.use("/admin",adminRoutes) //Index page adminRoutes http://localhost:8000/admin
 // App.use("/web",webRoutes) //Index page adminRoutes http://localhost:8000/admin
 // App.use("/app",appRoutes) //Index page adminRoutes http://localhost:8000/admin
+
+App.use("/web",webRoutes)
 
 App.listen(process.env.PORT || 8000,()=>{ //http://localhost:8000/
 

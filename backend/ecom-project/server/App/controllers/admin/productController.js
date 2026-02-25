@@ -1,6 +1,8 @@
 const { mySlug } = require("../../config/helper");
 const categoryModal = require("../../model/categoryModel");
 const colorModal = require("../../model/colorModel");
+const materialModel = require("../../model/materialModel");
+const productModal = require("../../model/productModels");
 const subcategoryModal = require("../../model/subCategoryModel");
 const subSubcategoryModal = require("../../model/subSubCategoryModel");
 
@@ -14,12 +16,28 @@ let productCreate=async (req,res)=>{
 
     obj['slug']=slug
 
-    if(req.file){
-        if(req.file.filename){
-            obj['productImage']=req.file.filename
+
+    console.log(req.files)
+
+
+    if(req.files){
+        if(req.files['productImage'][0].filename){
+            obj['productImage']=req.files['productImage'][0].filename
+        }
+
+        if(req.files['productGallery']){
+          var productImages = [];
+
+          req.files['productGallery'].forEach((value) => {
+            productImages.push(value.filename)
+          })
+
+          obj['productGallery'] = productImages;
+
         }
     }
     
+
     
       try {
         let productRes = productModal(obj); //Error
@@ -30,6 +48,8 @@ let productCreate=async (req,res)=>{
           subcategoryFinalResRes,
         });
       } catch (dbError) {
+
+        console.log(dbError);
         let errors = [];
         let obj = {};
         for (let errorKey in dbError.errors) {
@@ -148,4 +168,22 @@ let getproductColors=async (req,res)=>{
   });
 }
 
-module.exports={productCreate,productView,parentCategoryData,subCategoryData,subsubCategoryData,getproductColors}
+let getProductMaterials=async (req,res)=>{
+
+   let filter = {
+    deletedAt: null,
+    materialStatus:true,
+  };
+
+   let data = await materialModel.
+   find(filter)
+   .select('materialName')
+   res.send({
+    _status: true,
+    _message: "material found",
+   
+    data,
+  });
+}
+
+module.exports={productCreate,productView,parentCategoryData,subCategoryData,subsubCategoryData,getproductColors, getProductMaterials}

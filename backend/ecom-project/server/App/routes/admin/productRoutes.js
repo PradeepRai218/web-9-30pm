@@ -3,7 +3,7 @@ let productRoutes = express.Router();
 
 
 const multer  = require('multer');
-const { productCreate, productView, parentCategoryData, subCategoryData, subsubCategoryData, getproductColors } = require("../../controllers/admin/productController");
+const { productCreate, productView, parentCategoryData, subCategoryData, subsubCategoryData, getproductColors, getProductMaterials } = require("../../controllers/admin/productController");
 // const upload = multer({ dest: 'uploads/' }) //MiddleWare
 
 let storage =multer.diskStorage({
@@ -46,6 +46,8 @@ productRoutes.get("/sub-category/:parentId",subCategoryData);
 productRoutes.get("/sub-sub-category/:parentId",subsubCategoryData);
 
 productRoutes.get("/color",getproductColors);
+
+productRoutes.get("/material",getProductMaterials);
 
 // productRoutes.delete("/delete/:id", subcategoryDelete);
 

@@ -49,6 +49,10 @@ const schema = new mongoose.Schema({
    productGallery: {
     type: Array,
   },
+  isFeatured : {
+    type : Number,
+    default : 0   // 0 - No 1 - Yes
+  },
   productPrice: {
     type: Number,
   },

@@ -1,8 +1,103 @@
-import React, { useState } from 'react'
+import axios from 'axios';
+import iziToast from 'izitoast';
+import React, { useEffect, useState } from 'react'
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 
 
 export default function AddProduct() {
+
+  var [colors, setColors] = useState([]);
+  var [materials, setMaterials] = useState([]);
+  var [categories, setCategories] = useState([]);
+  var [subCategories, setSubCategories] = useState([]);
+  var [subSubCategories, setSubSubCategories] = useState([]);
+  var [parentCategory, setParentCategory] = useState('')
+
+  let apiBaseUrl = import.meta.env.VITE_APIBASEURL;
+
+  useEffect(() => {
+    axios.get(`${apiBaseUrl}/product/material`)
+    .then((result) => {
+      setMaterials(result.data.data);
+    })
+    .catch(() => {
+      iziToast.error({
+        title: "Error",
+        message: "Something went wrong !",
+        position: "topRight",
+      });
+    })
+
+
+    axios.get(`${apiBaseUrl}/product/color`)
+    .then((result) => {
+      setColors(result.data.data);
+    })
+    .catch(() => {
+      iziToast.error({
+        title: "Error",
+        message: "Something went wrong !",
+        position: "topRight",
+      });
+    })
+
+    axios.get(`${apiBaseUrl}/product/parent-category`)
+    .then((result) => {
+      setCategories(result.data.data);
+    })
+    .catch(() => {
+      iziToast.error({
+        title: "Error",
+        message: "Something went wrong !",
+        position: "topRight",
+      });
+    })
+
+  },[])
+
+  const selectCategory = (event) => {
+    setParentCategory(event.target.value);
+  }
+
+  const selectSubCategory = (event) => {
+    if(event.target.value){
+      axios.get(`${apiBaseUrl}/product/sub-sub-category/${event.target.value}`)
+        .then((result) => {
+          setSubSubCategories(result.data.data);
+        })
+        .catch(() => {
+          iziToast.error({
+            title: "Error",
+            message: "Something went wrong !",
+            position: "topRight",
+          });
+        })
+      } else {
+        setSubSubCategories([]);
+      }
+  }
+
+  useEffect(() => {
+    if(parentCategory){
+      axios.get(`${apiBaseUrl}/product/sub-category/${parentCategory}`)
+        .then((result) => {
+          setSubCategories(result.data.data);
+        })
+        .catch(() => {
+          iziToast.error({
+            title: "Error",
+            message: "Something went wrong !",
+            position: "topRight",
+          });
+        })
+      } else {
+        setSubCategories([]);
+      }
+
+  },[parentCategory])
+
+
   let [errors, setErrors] = useState([]);
   let [selectedImage, setSelectedImage] = useState("");
 
@@ -33,6 +128,25 @@ export default function AddProduct() {
       setErrors(updated);
     }
   };
+
+  let navigate=useNavigate()
+
+  const productSave = (event) => {
+    event.preventDefault();
+
+    axios.post(`${apiBaseUrl}/product/create`, event.target)
+    .then((res) => res.data)
+    .then((finalRes) => {
+      console.log(finalRes);
+      if (finalRes._status) {
+        navigate('/product/view')
+      }
+      else {
+      }
+    })
+
+    console.log('Hello');
+  }
 
   return (
     <section className="w-full">
@@ -69,30 +183,54 @@ export default function AddProduct() {
        <div className="w-full min-h-[680px] px-5 bg-gray-100 py-10">
         <div className="mx-auto">
           <h3 className="text-[24px] font-semibold bg-gray-200 py-3 px-5 rounded-t-lg border border-gray-300 text-gray-800">Add New Product</h3>
-          <form className="border border-t-0 bg-white p-6 rounded-b-lg shadow-sm">
+          <form className="border border-t-0 bg-white p-6 rounded-b-lg shadow-sm" onSubmit={ productSave }>
 
             <div className='flex gap-3'>
 
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Parent Category</label>
-                <select onKeyUp={ErrorHandler} name="parent_category" className="text-[17px] border cursor-pointer border-gray-300 rounded-lg block w-full py-2.5 px-3">
+                <select onChange={ selectCategory } name="parentCategory" className="text-[17px] border cursor-pointer border-gray-300 rounded-lg block w-full py-2.5 px-3">
                   <option value=''>Select Parent Category</option>
+
+                  {
+                    categories.map((v,i) => {
+                      return(
+                        <option value={v._id}> {v.categoryName}</option>
+                      )
+                    })
+                  }
                 </select>
                 {errors.includes("parent_category") && <p className="text-red-600 text-sm mt-1">Parent category is required</p>}
               </div>
 
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Sub Category</label>
-                <select onKeyUp={ErrorHandler} name="sub_category" className="text-[17px] border cursor-pointer border-gray-300 rounded-lg block w-full py-2.5 px-3">
+                <select onChange={ selectSubCategory }  name="subCategory" className="text-[17px] border cursor-pointer border-gray-300 rounded-lg block w-full py-2.5 px-3">
                   <option value=''>Select Sub Category</option>
+
+                  {
+                    subCategories.map((v,i) => {
+                      return(
+                        <option value={v._id}> {v.subcategoryName}</option>
+                      )
+                    })
+                  }
                 </select>
                 {errors.includes("sub_category") && <p className="text-red-600 text-sm mt-1">Sub category is required</p>}
               </div>
 
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Sub Sub Category</label>
-                <select onKeyUp={ErrorHandler} name="sub_sub_category" className="text-[17px] border cursor-pointer border-gray-300 rounded-lg block w-full py-2.5 px-3">
+                <select onKeyUp={ErrorHandler} name="subSubCategory" className="text-[17px] border cursor-pointer border-gray-300 rounded-lg block w-full py-2.5 px-3">
                   <option value=''>Select Sub Sub Category</option>
+
+                  {
+                    subSubCategories.map((v,i) => {
+                      return(
+                        <option value={v._id}> {v.subSubcategoryName}</option>
+                      )
+                    })
+                  }
                 </select>
                 {errors.includes("sub_sub_category") && <p className="text-red-600 text-sm mt-1">Sub Sub category is required</p>}
               </div>
@@ -102,24 +240,51 @@ export default function AddProduct() {
             <div className='flex gap-3'>
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Product Name</label>
-                <input type="text" name="product_name" onKeyUp={ErrorHandler} placeholder="Enter product name" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
+                <input type="text" name="productName" onKeyUp={ErrorHandler} placeholder="Enter product name" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
                 {errors.includes("product_name") && <p className="text-red-600 text-sm mt-1">Product name is required</p>}
               </div>
 
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Materials</label>
-                <select onKeyUp={ErrorHandler} name="materials" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3">
+                <select onKeyUp={ErrorHandler} name="productMaterials" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3">
                   <option value=''>Select Material</option>
-                  <option>1</option>
-                  <option>2</option>
+
+                  {
+                    materials.map((v,i) => {
+                      return(
+                        <option value={v._id}> {v.materialName}</option>
+                      )
+                    })
+                  }
+                  
                 </select>
                 {errors.includes("materials") && <p className="text-red-600 text-sm mt-1">Material is required</p>}
               </div>
 
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Colors</label>
-                <select onKeyUp={ErrorHandler} name="colors" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3">
+                <select onKeyUp={ErrorHandler} name="producColor" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3">
                   <option value=''>Select Colors</option>
+
+                  {
+                    colors.map((v,i) => {
+                      return(
+                        <option value={v._id}> {v.colorName}</option>
+                      )
+                    })
+                  }
+                </select>
+                {errors.includes("colors") && <p className="text-red-600 text-sm mt-1">Colors are required</p>}
+              </div>
+            </div>
+
+            <div className='flex gap-3'>
+              <div className="mb-6 basis-[33%]">
+                <label className="block mb-2 text-md font-medium text-gray-700">Select Is Featured</label>
+                <select onKeyUp={ErrorHandler} name="isFeatured" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3">
+                  <option value=''>Select Is Featured</option>
+                  <option value='1'>Yes</option>
+                  <option value='0'>No</option>
                 </select>
                 {errors.includes("colors") && <p className="text-red-600 text-sm mt-1">Colors are required</p>}
               </div>
@@ -127,13 +292,13 @@ export default function AddProduct() {
 
             <div className='mb-6'>
               <label className="block mb-2 text-md font-medium text-gray-700">Short Description</label>
-              <textarea name="short_description" onKeyUp={ErrorHandler} placeholder="Enter short description" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
+              <textarea name="productShortDescription" onKeyUp={ErrorHandler} placeholder="Enter short description" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
               {errors.includes("short_description") && <p className="text-red-600 text-sm mt-1">Short description is required</p>}
             </div>
 
             <div className='mb-6'>
               <label className="block mb-2 text-md font-medium text-gray-700">Description</label>
-              <textarea name="description" onKeyUp={ErrorHandler} placeholder="Enter description" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
+              <textarea name="productDescription" onKeyUp={ErrorHandler} placeholder="Enter description" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
               {errors.includes("description") && <p className="text-red-600 text-sm mt-1">Description is required</p>}
             </div>
 
@@ -157,25 +322,33 @@ export default function AddProduct() {
                     <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
                   )}
 
-                  <input type="file" accept="image/*" onChange={handleimagechange} className="absolute  z-20  inset-0 opacity-0 cursor-pointer" />
+                  <input type="file" name='productImage' accept="image/*" onChange={handleimagechange} className="absolute  z-20  inset-0 opacity-0 cursor-pointer" />
                 </div>
               </div>
             </div>
 
+            
+
             <div className='flex gap-3'>
+
+              <div className="mb-6 basis-[33%]">
+                <label className="block mb-2 text-md font-medium text-gray-700">Images</label>
+                <input type="file" name="productGallery" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" accept="image/*" multiple/>
+              </div>
+
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Price</label>
-                <input type="number" name="price" min={1} placeholder="Enter price" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
+                <input type="number" name="productPrice" min={1} placeholder="Enter price" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
               </div>
 
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Actual Price</label>
-                <input type="number" name="actual_price" min={1} placeholder="Enter actual price" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
+                <input type="number" name="productActualPrice" min={1} placeholder="Enter actual price" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
               </div>
 
               <div className="mb-6 basis-[33%]">
                 <label className="block mb-2 text-md font-medium text-gray-700">Order</label>
-                <input type="number" name="order" min={1} placeholder="Enter order" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
+                <input type="number" name="productOrder" min={1} placeholder="Enter order" className="text-[17px] border border-gray-300 rounded-lg block w-full py-2.5 px-3" />
               </div>
             </div>
 
